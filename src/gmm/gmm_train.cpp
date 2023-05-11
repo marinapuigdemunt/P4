@@ -52,7 +52,7 @@ int main(int argc, const char *argv[])
 	GMM gmm;
 
 	/// \TODO Initialize GMM from data; initially, you should implement random initialization.
-	///
+	/// \DONE acorde a las ociones dadas:  -i init	Initialization method: 0=random, 1=VQ, 2=EM split (def. 0)
 	/// Other alternatives are: vq, em_split... See the options of the program and place each
 	/// initicialization accordingly.
 	switch (init_method) {
@@ -60,16 +60,22 @@ int main(int argc, const char *argv[])
 			gmm.random_init(data,nmix);
 			break;
 		case 1:
+		//int GMM::vq_lbg(const fmatrix &data, unsigned int final_nmix, unsigned int max_it, float inc_threshold, int verbose)
+			gmm.vq_lbg(data, nmix, init_iterations, init_threshold, verbose);
 			break;
 		case 2:
+		//int GMM::em_split(const fmatrix &data, unsigned int final_nmix, unsigned int max_it, float inc_threshold, int verbose) 
+			gmm.em_split(data, nmix, init_iterations, init_threshold, verbose);
 			break;
 		default:
+			gmm.random_init(data,nmix);
 			;
 	}
 
-	/// \TODO Apply EM to estimate GMM parameters (complete the funcion in gmm.cpp)
-	gmm.em(data,em_iterations,em_threshold,verbose);
-	
+	/// \TODO Apply EM to estimate GMM parameters (complete the funcion in gmm.cpp) 
+	/// \DONE
+		gmm.em(data,em_iterations,em_threshold,verbose);
+
 	//Create directory, if it is needed
 	gmm_filename.checkDir();
 	//Save gmm
