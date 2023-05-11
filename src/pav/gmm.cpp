@@ -110,8 +110,10 @@ namespace upc
 		float lprob = 0.0;
 		unsigned int n;
 
-		for (n=0; n<data.nrow(); ++n) {
+		for (n=0; n<data.nrow(); n++) {
 			/// \TODO Compute the logprob of a single frame of the input data; you can use gmm_logprob() above.
+			/// \DONE gmm_logprob() calcula la probabilidad de una única frame: Para calcular la probablidad de la matriz entera de input simplemente iteramos la función dada dentro de un for que recorre la matriz (y luego calculamos su media)
+					lprob += gmm_logprob(data[n]);
 		}
 		return lprob/data.nrow();
 	}
@@ -213,6 +215,27 @@ namespace upc
 			//
 			// Update old_prob, new_prob and inc_prob in order to stop the loop if logprob does not
 			// increase more than inc_threshold.
+
+			/// \DONE implemetado el algoritmo de actualización de expectation y maximization acorde a lo estipulado en el enunciado de la práctica
+
+			///E: El algoritmo calcula la probabilidad de las secuencias dado el modelo y
+			///el reparto de cada trama entre las distintas gaussianas del GMM (variable weights).
+
+			new_prob=this->em_expectation(data,weights);
+			inc_prob=new_prob-old_prob;
+			old_prob=new_prob;
+			///M: Utilizando el reparto de las tramas, weights, el algoritmo recalcula los parámetros
+			/// del modelo GMM: pesos, medias y varianzas.
+			float this->em_maximization(data,weights);
+
+		///Criterios para considerar convergencia y finalizar el bucle: 
+		///1- Alcanzar un número máximo de iteraciones
+		  if (iteration>=max_it) break;
+
+		///2- Que el incremento en la función de verosimilitud, logprob, baje de un cierto umbral.
+			 if(inc_prob<inc_threshold) break;
+    		
+
 			if (verbose & 01)
 				cout << "GMM nmix=" << nmix << "\tite=" << iteration << "\tlog(prob)=" << new_prob << "\tinc=" << inc_prob << endl;
 		}
