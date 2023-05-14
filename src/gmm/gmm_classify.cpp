@@ -25,8 +25,19 @@ int classify(const vector<GMM> &vgmm, const fmatrix &dat, float &maxlprob)
 	int maxind  = -1;
 	maxlprob = -1e38;
 
-	//TODO Assign maxind to the best index of vgmm calling 'logprob' for each gmm. Implement this function in gmm.cpp
+	// \TODO Assign maxind to the best index of vgmm calling 'logprob' for each gmm. Implement this function in gmm.cpp
+	// \DONE Creamos un bucle para encontrar el valor máximo de la verosimilitud de la secuencia 'vgmm' y guardamos su indice en la variable maxind
+	
 	maxind = 0;
+
+	for (unsigned int ind = 0; ind < vgmm.size(); ind++){
+		lprob = vgmm[ind].logprob(dat);
+
+		if (lprob > maxlprob){
+			maxlprob = lprob;
+			maxind = ind;
+		}
+	}
 
 	return maxind;
 }

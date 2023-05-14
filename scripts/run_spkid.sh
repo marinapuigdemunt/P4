@@ -17,11 +17,14 @@ set -o pipefail
 # - name_exp: name of the experiment
 # - db_devel: directory of the speecon database used during development
 # - db_test:  directory of the database used in the final test
+# \DONE Hecho
+
 lists=lists
 w=work
 name_exp=one
 db_devel=spk_8mu/speecon
 db_test=spk_8mu/sr_test
+
 
 # Ficheros de resultados del reconocimiento y verificación
 LOG_CLASS=$w/class_${FEAT}_${name_exp}.log
@@ -81,7 +84,27 @@ compute_lp() {
     shift
     for filename in $(sort $*); do
         mkdir -p `dirname $w/$FEAT/$filename.$FEAT`
-        EXEC="wav2lp 8 $db/$filename.wav $w/$FEAT/$filename.$FEAT"
+        EXEC="wav2lp 8 $db/$filename.wav $w/$FEAT/$filename.$FEAT" #wav2lp orden del lp
+        echo $EXEC && $EXEC || exit 1
+    done
+}
+
+compute_lpcc() {
+    db1=$1
+    shift
+    for filename in $(sort $*); do
+        mkdir -p `dirname $w/$FEAT/$filename.$FEAT`
+        EXEC="wav2lpcc 8 25 $db1/$filename.wav $w/$FEAT/$filename.$FEAT" #wav2lpcc [orden del lp] [orden del cepstrum]
+        echo $EXEC && $EXEC || exit 1
+    done
+}
+
+compute_mfcc() {
+    db2=$1
+    shift
+    for filename in $(sort $*); do
+        mkdir -p `dirname $w/$FEAT/$filename.$FEAT`
+        EXEC="wav2mfcc 20 40 $db2/$filename.wav $w/$FEAT/$filename.$FEAT" #wav2mfcc [orden del mfcc] [orden de canales para el mel-filter bank]
         echo $EXEC && $EXEC || exit 1
     done
 }

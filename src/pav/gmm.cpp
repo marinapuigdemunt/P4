@@ -208,8 +208,7 @@ namespace upc
 
 		fmatrix weights(data.nrow(), nmix);
 		for (iteration=0; iteration<max_it; ++iteration) {
-			/// \TODO
-			// Complete the loop in order to perform EM, and implement the stopping criterion.
+			/// \TODO Complete the loop in order to perform EM, and implement the stopping criterion.
 			//
 			// EM loop: em_expectation + em_maximization.
 			//
@@ -218,24 +217,23 @@ namespace upc
 
 			/// \DONE implemetado el algoritmo de actualización de expectation y maximization acorde a lo estipulado en el enunciado de la práctica
 
-			///E: El algoritmo calcula la probabilidad de las secuencias dado el modelo y
+			///E : El algoritmo calcula la probabilidad de las secuencias dado el modelo y
 			///el reparto de cada trama entre las distintas gaussianas del GMM (variable weights).
-
-			new_prob=this->em_expectation(data,weights);
-			inc_prob=new_prob-old_prob;
+			new_prob = this->em_expectation(data,weights);
+			inc_prob = new_prob - old_prob;
 			old_prob=new_prob;
-			///M: Utilizando el reparto de las tramas, weights, el algoritmo recalcula los parámetros
-			/// del modelo GMM: pesos, medias y varianzas.
-			float this->em_maximization(data,weights);
+			
+			///M : Utilizando el reparto de las tramas, weights, el algoritmo recalcula los parámetros
+			/// del modelo GMM : pesos, medias y varianzas.
+			this->em_maximization(data,weights);
 
-		///Criterios para considerar convergencia y finalizar el bucle: 
-		///1- Alcanzar un número máximo de iteraciones
-		  if (iteration>=max_it) break;
+			///Criterios para considerar convergencia y finalizar el bucle: 
+			///1- Alcanzar un número máximo de iteraciones
+		    if (iteration>=max_it) break;
 
-		///2- Que el incremento en la función de verosimilitud, logprob, baje de un cierto umbral.
-			 if(inc_prob<inc_threshold) break;
+			///2- Que el incremento en la función de verosimilitud, logprob, baje de un cierto umbral.
+			if(inc_prob<inc_threshold) break;
     		
-
 			if (verbose & 01)
 				cout << "GMM nmix=" << nmix << "\tite=" << iteration << "\tlog(prob)=" << new_prob << "\tinc=" << inc_prob << endl;
 		}
