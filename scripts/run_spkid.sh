@@ -104,7 +104,7 @@ compute_mfcc() {
     shift
     for filename in $(sort $*); do
         mkdir -p `dirname $w/$FEAT/$filename.$FEAT`
-        EXEC="wav2mfcc 20 40 $db2/$filename.wav $w/$FEAT/$filename.$FEAT" #wav2mfcc [orden del mfcc] [orden de canales para el mel-filter bank]
+        EXEC="wav2mfcc 20 36 $db2/$filename.wav $w/$FEAT/$filename.$FEAT" #wav2mfcc [orden del mfcc] [orden de canales para el mel-filter bank]
         echo $EXEC && $EXEC || exit 1
     done
 }
