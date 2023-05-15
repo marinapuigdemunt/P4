@@ -128,7 +128,7 @@ xlabel("Coeficiente 2")
 ylabel("Coeficiente 3")
 ```
 
-![image](https://github.com/marinapuigdemunt/P4/assets/125259801/888f8932-6fa6-4835-9488-a5878d53dead)
+![image](https://github.com/marinapuigdemunt/P4/assets/125259801/c34f6eab-e5e1-4880-b851-bc19495c7496)
 
   + ¿Cuál de ellas le parece que contiene más información?
 
@@ -141,30 +141,30 @@ En cambio, las gráficas de la LPCC y MFCC tienen sus puntos mucho mejor distrib
 - Usando el programa <code>pearson</code>, obtenga los coeficientes de correlación normalizada entre los
   parámetros 2 y 3 para un locutor, y rellene la tabla siguiente con los valores obtenidos.
 
-LP: ``pearson work/lp/BLOCK01/SES019/*.lp``
+LP: ``pearson work/lp/BLOCK01/SES017/*.lp``
 
-![image](https://github.com/marinapuigdemunt/P4/assets/125259801/82aa4e64-fd82-4ee8-9c03-c082523a7e5b)
+![image](https://github.com/marinapuigdemunt/P4/assets/125259801/c9403217-e709-487c-9dbc-53047d7bc361)
 
-LPCC: ``pearson work/lpcc/BLOCK01/SES019/*.lpcc``
+LPCC: ``pearson work/lpcc/BLOCK01/SES017/*.lpcc``
 
-![image](https://github.com/marinapuigdemunt/P4/assets/125259801/7b1a421b-5f61-4e87-b410-1060ac32f317)
+![image](https://github.com/marinapuigdemunt/P4/assets/125259801/0fce67c7-d64d-40dd-8762-1b97120825aa)
 
-MFCC: ``pearson work/mfcc/BLOCK01/SES019/*.mfcc``
+MFCC: ``pearson work/mfcc/BLOCK01/SES017/*.mfcc``
 
-![image](https://github.com/marinapuigdemunt/P4/assets/125259801/7bda8efe-cdfc-4f94-bcd9-b6cd615838df)
+![image](https://github.com/marinapuigdemunt/P4/assets/125259801/ec0f7819-2e6b-4e25-83f7-a1a726a1321a)
 
 
   |                        | LP   | LPCC | MFCC | 
   |------------------------|:----:|:----:|:----:|
-  | &rho;<sub>x</sub>[2,3] |   -0.716101   |   0.0425619   |   0.263597   |
+  | &rho;<sub>x</sub>[2,3] |   -0.872284   |   -0.0457713   |   0.274578   |
   
   + Compare los resultados de <code>pearson</code> con los obtenidos gráficamente.
   
-En la LP hemos obtenido una rho en valor absoluto bastante cercana a 1, esto implica una alta correlación entre componentes tal y como habíamos visto antes con la gráfica. En cambio, en la LPCC y la MFCC hemos obtenido unos valores muy cercanos a 0 y por lo tanto obtenemos unos coeficientes poco correlados tal y como habíamos observado en las gráficas.
+En la LP hemos obtenido una rho en valor absoluto bastante cercana a 1, esto implica una alta correlación entre componentes tal y como habíamos visto antes con la gráfica. En cambio, en la LPCC y la MFCC hemos obtenido unos valores muy cercanos a 0 y por lo tanto obtenemos unos coeficientes poco correlados tal y como habíamos observado en las gráficas. Hemos de destacar que sorprendentemente hemos obtenido un valor más cerano a 0 con la LPCC.
 
 - Según la teoría, ¿qué parámetros considera adecuados para el cálculo de los coeficientes LPCC y MFCC?
 
-Según la teoría, para la LPCC el orden típico de coeficientes está entre 8 y 16. En cambio, para la MFCC se eligen entre 12 y 20 coeficientes y el númereo de filtros MEL suele ser entre 20 y 40.
+Según la teoría, para la LPCC el orden típico de coeficientes está entre 8 y 16. En cambio, para la MFCC se eligen entre 12 y 25 coeficientes y el númereo de filtros MEL suele ser entre 20 y 40.
 
 ### Entrenamiento y visualización de los GMM.
 
