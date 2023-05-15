@@ -107,7 +107,7 @@ namespace upc
 		if (nmix == 0 or vector_size == 0 or vector_size != data.ncol())
 			return -1e38F;
 
-		float lprob = 0.0;
+		float lprob = 0.0;i
 		unsigned int n;
 
 		for (n=0; n<data.nrow(); n++) {
