@@ -40,9 +40,17 @@ ejercicios indicados.
 
 - Escriba el *pipeline* principal usado para calcular los coeficientes cepstrales de predicción lineal
   (LPCC) en su fichero <code>scripts/wav2lpcc.sh</code>:
-
+```bash
+sox $inputfile -t raw - dither -p 12 | $X2X +sf | $FRAME -l 200 -p 40 | $WINDOW -l 200 -L 200 |
+	$LPC -l 240 -m $lpc_order | $LPC2C -m $lpc_order -M $cepstrum_order  > $base.lpcc
+```
+  
 - Escriba el *pipeline* principal usado para calcular los coeficientes cepstrales en escala Mel (MFCC) en su
   fichero <code>scripts/wav2mfcc.sh</code>:
+```bash
+sox $inputfile -t raw - | $X2X +sf | $FRAME -l 200 -p 40 | $WINDOW -l 200 -L 200 |
+  $MFCC -l 200 -m $mfcc_order -n $mfcc_order_channel_melfilterbank -s 8 -w 1 > $base.mfcc
+ ```
 
 ### Extracción de características.
 
@@ -51,18 +59,112 @@ ejercicios indicados.
   
   + Indique **todas** las órdenes necesarias para obtener las gráficas a partir de las señales 
     parametrizadas.
+    
+Primero hemos convertido a texto los coeficientes 2 y 3 del fichero de parámetros del locutor SES017:
+
+LP:
+```bash
+fmatrix_show work/lp/BLOCK01/SES017/*.lp | egrep '^\[' | cut -f4,5 > lp_2_3.txt
+```
+LPCC:
+```bash
+fmatrix_show work/lpcc/BLOCK01/SES017/*.lpcc | egrep '^\[' | cut -f4,5 > lpcc_2_3.txt
+```
+MFCC:
+```bash
+fmatrix_show work/mfcc/BLOCK01/SES017/*.mfcc | egrep '^\[' | cut -f4,5 > mfcc_2_3.txt
+```
+
+A continuación hemos creado las 3 gráficas mediante el siguiente script de MATLAB:
+```bash
+%%Gráficas
+
+%LP
+fileID_lp = fopen('lp_2_3.txt','r');
+formatSpec_lp = '%f %f';
+size_lp = [2 Inf];
+lp_transp = fscanf(fileID_lp,formatSpec_lp, size_lp);
+lp = lp_transp';
+
+lp_coef_2 = lp(:, 1);
+lp_coef_3 = lp(:, 2);
+
+subplot(3,1,1);
+plot(lp_coef_2,lp_coef_3,"*")
+title('Dependencia entre los coeficientes 2 y 3 de la parametrización LP del locutor 17')
+xlabel("Coeficiente 2")
+ylabel("Coeficiente 3")
+
+%LPCC
+fileID_lpcc = fopen('lpcc_2_3.txt','r');
+formatSpec_lpcc = '%f %f';
+size_lpcc = [2 Inf];
+lpcc_transp = fscanf(fileID_lpcc,formatSpec_lpcc, size_lpcc);
+lpcc = lpcc_transp';
+
+lpcc_coef_2 = lpcc(:, 1);
+lpcc_coef_3 = lpcc(:, 2);
+
+subplot(3,1,2);
+plot(lpcc_coef_2,lpcc_coef_3,"*")
+title('Dependencia entre los coeficientes 2 y 3 de la parametrización LPCC del locutor 17')
+xlabel("Coeficiente 2")
+ylabel("Coeficiente 3")
+
+%MFCC
+fileID_mfcc = fopen('mfcc_2_3.txt','r');
+formatSpec_mfcc = '%f %f';
+size_mfcc = [2 Inf];
+mfcc_transp = fscanf(fileID_mfcc,formatSpec_mfcc, size_mfcc);
+mfcc = mfcc_transp';
+
+mfcc_coef_2 = mfcc(:, 1);
+mfcc_coef_3 = mfcc(:, 2);
+
+subplot(3,1,3);
+plot(mfcc_coef_2,mfcc_coef_3,"*")
+title('Dependencia entre los coeficientes 2 y 3 de la parametrización MFCC del locutor 17')
+xlabel("Coeficiente 2")
+ylabel("Coeficiente 3")
+```
+
+![image](https://github.com/marinapuigdemunt/P4/assets/125259801/888f8932-6fa6-4835-9488-a5878d53dead)
+
   + ¿Cuál de ellas le parece que contiene más información?
+
+Para saber cual contiene más información nos fijamos en los puntos de las gráficas. Cuanto más separados estén más incorrelados estarán y por tanto, aportarán más información. 
+
+Si observamos la gráfica de la LP vemos que los puntos forman una especie de recta, por lo tanto, conociendo uno de los dos coeficientes podemos determinar el valor del otro. Así que con solo uno de los dos, obtendríamos la misma información que con ambos.
+
+En cambio, las gráficas de la LPCC y MFCC tienen sus puntos mucho mejor distribuidos en los ejes, pero claramente se ve que la MFCC está mucho más incorrelada y por lo tanto, es la que contiene más información.
 
 - Usando el programa <code>pearson</code>, obtenga los coeficientes de correlación normalizada entre los
   parámetros 2 y 3 para un locutor, y rellene la tabla siguiente con los valores obtenidos.
 
-  |                        | LP   | LPCC | MFCC |
+LP: ``pearson work/lp/BLOCK01/SES019/*.lp``
+
+![image](https://github.com/marinapuigdemunt/P4/assets/125259801/82aa4e64-fd82-4ee8-9c03-c082523a7e5b)
+
+LPCC: ``pearson work/lpcc/BLOCK01/SES019/*.lpcc``
+
+![image](https://github.com/marinapuigdemunt/P4/assets/125259801/7b1a421b-5f61-4e87-b410-1060ac32f317)
+
+MFCC: ``pearson work/mfcc/BLOCK01/SES019/*.mfcc``
+
+![image](https://github.com/marinapuigdemunt/P4/assets/125259801/7bda8efe-cdfc-4f94-bcd9-b6cd615838df)
+
+
+  |                        | LP   | LPCC | MFCC | 
   |------------------------|:----:|:----:|:----:|
-  | &rho;<sub>x</sub>[2,3] |      |      |      |
+  | &rho;<sub>x</sub>[2,3] |   -0.716101   |   0.0425619   |   0.263597   |
   
   + Compare los resultados de <code>pearson</code> con los obtenidos gráficamente.
   
+En la LP hemos obtenido una rho en valor absoluto bastante cercana a 1, esto implica una alta correlación entre componentes tal y como habíamos visto antes con la gráfica. En cambio, en la LPCC y la MFCC hemos obtenido unos valores muy cercanos a 0 y por lo tanto obtenemos unos coeficientes poco correlados tal y como habíamos observado en las gráficas.
+
 - Según la teoría, ¿qué parámetros considera adecuados para el cálculo de los coeficientes LPCC y MFCC?
+
+Según la teoría, para la LPCC el orden típico de coeficientes está entre 8 y 16. En cambio, para la MFCC se eligen entre 12 y 20 coeficientes y el númereo de filtros MEL suele ser entre 20 y 40.
 
 ### Entrenamiento y visualización de los GMM.
 
