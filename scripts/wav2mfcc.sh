@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Make pipeline return code the last non-zero one or zero if all the commands return zero.
+set -o pipefail
+
 ## \file
 ## \TODO This file implements a very trivial feature extraction; use it as a template for other front ends.
 ##\DONE Resuleto para MFCC
@@ -40,12 +43,16 @@ else
 fi
 
 # Main command for feature extration
-sox $inputfile -t raw - | $X2X +sf | $FRAME -l 200 -p 40 | $WINDOW -l 200 -L 200 |
-   $MFCC -l 200 -m $mfcc_order -n $mfcc_order_channel_melfilterbank -s 8 -w 1 > $base.mfcc
+   sox $inputfile -t raw -e signed -b 16 - | $X2X +sf | $FRAME -l 200 -p 40 | $WINDOW -l 200 -L 200 |
+    $MFCC -l 200 -m $mfcc_order -n $mfcc_order_channel_melfilterbank -s 8 -w 1 > $base.mfcc
 
 # Our array files need a header with the number of cols and rows:
 ncol=$((mfcc_order)) # mfcc p =>  (gain a1 a2 ... ap)
 nrow=`$X2X +fa < $base.mfcc | wc -l | perl -ne 'print $_/'$ncol', "\n";'`
+#nrow=$(wc -c $base.mfcc | cut -d ' ' -f1 | perl -ne 'print $_/'$ncol'/4, "\n";')
+if [[ $? != 0 ]]; then
+   exit 1
+fi
 
 # Build fmatrix file by placing nrow and ncol in front, and the data after them
 echo $nrow $ncol | $X2X +aI > $outputfile
