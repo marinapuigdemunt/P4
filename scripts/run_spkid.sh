@@ -24,7 +24,9 @@ w=work
 name_exp=one
 db_devel=spk_8mu/speecon
 db_test=spk_8mu/sr_test
+
 world=users_and_others
+
 
 # Ficheros de resultados del reconocimiento y verificación
 LOG_CLASS=$w/class_${FEAT}_${name_exp}.log
@@ -105,8 +107,13 @@ compute_mfcc() {
     shift
     for filename in $(sort $*); do
         mkdir -p `dirname $w/$FEAT/$filename.$FEAT`
-        EXEC="wav2mfcc 24 36 $db2/$filename.wav $w/$FEAT/$filename.$FEAT" #wav2mfcc [orden del mfcc] [orden de canales para el mel-filter bank]
-        echo $EXEC && $EXEC || exit 1
+        while true; do
+            EXEC="wav2mfcc 20 36 $db2/$filename.wav $w/$FEAT/$filename.$FEAT" #wav2mfcc [orden del mfcc] [orden de canales para el mel-filter bank]
+            echo $EXEC && $EXEC
+            if [[ $? == 0 ]]; then
+                break
+            fi
+        done
     done
 }
 
@@ -163,6 +170,7 @@ for cmd in $*; do
        # Implement 'trainworld' in order to get a Universal Background Model for speaker verification
        #
        # - The name of the world model will be used by gmm_verify in the 'verify' command below.
+       # \DONE Hecho
        EXEC="gmm_train -v 1 -T 0.001 -N 5 -m 1 -d $w/$FEAT -e $FEAT -g $w/gmm/$FEAT/$world.gmm $lists/verif/$world.train"
        echo $EXEC && $EXEC || exit 1
 
@@ -175,9 +183,10 @@ for cmd in $*; do
        #   For instance:
        #   * <code> gmm_verify ... > $LOG_VERIF </code>
        #   * <code> gmm_verify ... | tee $LOG_VERIF </code>
+       # \DONE Hecho
        EXEC="gmm_verify -d $w/$FEAT -e $FEAT -D $w/gmm/$FEAT -w $world -E gmm lists/gmm.list lists/verif/all.test lists/verif/all.test.candidates"
        echo $EXEC && $EXEC | tee $LOG_VERIF
-       
+
    elif [[ $cmd == verifyerr ]]; then
        if [[ ! -s $LOG_VERIF ]] ; then
           echo "ERROR: $LOG_VERIF not created"
