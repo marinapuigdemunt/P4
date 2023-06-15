@@ -50,17 +50,17 @@ En este, vemos los siguientes comandos:
 
 4. `$WINDOW`: Esta variable contiene el comando "window" (para macOS) o "sptk window" (para Windows). Se utiliza para aplicar una ventana a cada trama de datos de audio. En este caso, hemos usado una ventana rectangular, en que la longitud de la ventana es igual a la longitud de la trama (240 muestras).
 
-5. `$LPC`: Esta variable contiene el comando "lpc" (para macOS) o "sptk lpc" (para Windows). El comando se utiliza para estimar los coeficientes de predicción lineal (LPC) a partir de las tramas de datos de audio
+5. `$LPC`: Esta variable contiene el comando "lpc" (para macOS) o "sptk lpc" (para Windows). El comando se utiliza para estimar los coeficientes de predicción lineal (LPC) a partir de las tramas de datos de audio 
 
 - Explique el procedimiento seguido para obtener un fichero de formato *fmatrix* a partir de los ficheros de
   salida de SPTK (líneas 45 a 51 del script `wav2lp.sh`).
 
-Después de la extracción de características utilizando los comandos de SPTK, el resultado se guarda en un archivo temporal llamado `$base.lp`. Entonces, se utiliza el comando `x2x` para convertir el archivo `$base.lp` a formato ASCII (`+fa`). Esto convierte los datos binarios en una representación de números float en formato de texto legible. A continuación, se cuenta el número de líneas en el archivo resultante utilizando `wc -l`. Esto nos da el número total de elementos en la matriz de características LPC. Seguidamente se utiliza `perl` para dividir el número total de elementos por el número de columnas en la matriz, que es igual a `lpc_order + 1`. Esto nos da el número de filas en la matriz.
+Después de la extracción de características utilizando los comandos de SPTK mostrados en el apartado anterior, el resultado se guarda en un archivo temporal llamado `$base.lp`. Entonces, se utiliza el comando `x2x` para convertir el archivo `$base.lp` a formato ASCII (`+fa`). Esto convierte los datos binarios en una representación de números float en formato de texto legible. A continuación, se cuenta el número de líneas en el archivo resultante utilizando `wc -l`. Esto nos da el número total de elementos en la matriz de características LPC. Seguidamente se utiliza `perl` para dividir el número total de elementos por el número de columnas en la matriz, que es igual a `lpc_order + 1`. Esto nos da el número de filas en la matriz.
 
   * ¿Por qué es más conveniente el formato *fmatrix* que el SPTK?
+ El formato fmatrix es más legible y estructurado en comparación con el formato de salida de SPTK. El archivo fmatrix tiene un encabezado que especifica el número de filas y columnas, lo que facilita la comprensión de la estructura de los datos. Además, los datos están organizados en una matriz donde cada fila representa un conjunto de características, lo que facilita su interpretación y manipulación. Además, al tener un formato estándar, es más fácil trabajar con los datos en otras etapas del procesamiento, como el análisis, la visualización o la implementación de algoritmos de aprendizaje automático. Por último, fmatrix permite almacenar los datos de manera más compacta y eficiente en comparación con el formato de salida de SPTK. Al agregar un encabezado que especifica el número de filas y columnas, se evita la necesidad de almacenar metadatos adicionales en cada archivo. Esto reduce el tamaño de los archivos y el espacio de almacenamiento requerido.
 
-- Escriba el *pipeline* principal usado para calcular los coeficientes cepstrales de predicción lineal
-  (LPCC) en su fichero <code>scripts/wav2lpcc.sh</code>:
+- Escriba el *pipeline* principal usado para calcular los coeficientes cepstrales de predicción lineal (LPCC) en su fichero <code>scripts/wav2lpcc.sh</code>:
 ```bash
 sox $inputfile -t raw - dither -p 12 | $X2X +sf | $FRAME -l 200 -p 40 | $WINDOW -l 200 -L 200 |
 	$LPC -l 240 -m $lpc_order | $LPC2C -m $lpc_order -M $cepstrum_order  > $base.lpcc
