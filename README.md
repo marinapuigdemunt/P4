@@ -173,9 +173,11 @@ Según la teoría, para la LPCC el orden típico de coeficientes está entre 8 y
 Complete el código necesario para entrenar modelos GMM.
 
 Para entrenar los modelos de un locutor (por ejemplo el SES017) utilizamos la siguiente orden:
+
 ``gmm_train -d work/lp -e lp -g SES017.gmm lists/class/SES017.train``
 
 En cambio, para entrenar los GMM de todos los locutores a la vez utilizamos:
+
 LP: ``FEAT=lp run_spkid train``
 
 LPCC: ``FEAT=lpcc run_spkid train``
