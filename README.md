@@ -128,7 +128,8 @@ xlabel("Coeficiente 2")
 ylabel("Coeficiente 3")
 ```
 
-![image](https://github.com/marinapuigdemunt/P4/assets/125259801/c34f6eab-e5e1-4880-b851-bc19495c7496)
+![foto](https://github.com/marinapuigdemunt/P4/assets/125259801/1da93223-46c4-45c8-ac09-b4ec2e1a13a3)
+
 
   + ¿Cuál de ellas le parece que contiene más información?
 
