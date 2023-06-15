@@ -152,12 +152,13 @@ LPCC: ``pearson work/lpcc/BLOCK01/SES017/*.lpcc``
 
 MFCC: ``pearson work/mfcc/BLOCK01/SES017/*.mfcc``
 
-![image](https://github.com/marinapuigdemunt/P4/assets/125259801/ec0f7819-2e6b-4e25-83f7-a1a726a1321a)
+![image](https://github.com/marinapuigdemunt/P4/assets/125259801/973b7141-f0bc-4c65-9554-19ed63982b25)
+
 
 
   |                        | LP   | LPCC | MFCC | 
   |------------------------|:----:|:----:|:----:|
-  | &rho;<sub>x</sub>[2,3] |   -0.872284   |   -0.0457713   |   0.274578   |
+  | &rho;<sub>x</sub>[2,3] |   -0.872284   |   -0.0457713   |   -0.203934   |
   
   + Compare los resultados de <code>pearson</code> con los obtenidos gráficamente.
   
@@ -170,6 +171,16 @@ Según la teoría, para la LPCC el orden típico de coeficientes está entre 8 y
 ### Entrenamiento y visualización de los GMM.
 
 Complete el código necesario para entrenar modelos GMM.
+
+Para entrenar los modelos de un locutor (por ejemplo el SES017) utilizamos la siguiente orden:
+``gmm_train -d work/lp -e lp -g SES017.gmm lists/class/SES017.train``
+
+En cambio, para entrenar los GMM de todos los locutores a la vez utilizamos:
+LP: ``FEAT=lp run_spkid train``
+
+LPCC: ``FEAT=lpcc run_spkid train``
+
+MFCC: ``FEAT=mfcc run_spkid train``
 
 - Inserte una gráfica que muestre la función de densidad de probabilidad modelada por el GMM de un locutor
   para sus dos primeros coeficientes de MFCC.
