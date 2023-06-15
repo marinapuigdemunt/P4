@@ -43,11 +43,11 @@ else
 fi
 
 # Main command for feature extration
-   sox $inputfile -t raw -e signed -b 16 - | $X2X +sf | $FRAME -l 200 -p 40 | $WINDOW -l 200 -L 200 |
-    $MFCC -l 200 -m $mfcc_order -n $mfcc_order_channel_melfilterbank -s 8 -w 1 > $base.mfcc
+   sox $inputfile -t raw -e signed -b 16 - | $X2X +sf | $FRAME -l 200 -p 40 |
+    $MFCC -l 200 -m $mfcc_order -n $mfcc_order_channel_melfilterbank -s 8 -w 0 > $base.mfcc
 
 # Our array files need a header with the number of cols and rows:
-ncol=$((mfcc_order)) # mfcc p =>  (gain a1 a2 ... ap)
+ncol=$((mfcc_order)) # mfcc p =>  (c0 c1 c2 ... cp-1)
 nrow=`$X2X +fa < $base.mfcc | wc -l | perl -ne 'print $_/'$ncol', "\n";'`
 #nrow=$(wc -c $base.mfcc | cut -d ' ' -f1 | perl -ne 'print $_/'$ncol'/4, "\n";')
 if [[ $? != 0 ]]; then
