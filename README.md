@@ -231,17 +231,20 @@ Utilizamos el siguiente comando:
 
   Las de la izquierda muestran la población del usuario SES017 (puntos rojos) y las de la derecha muestran la población del usuario SES019 (puntos azules).
 
-Arriba izquierda: ``plot_gmm_feat -x 2 -y 3 work/gmm/mfcc/SES017.gmm work/mfcc/BLOCK01/SES017/* &``
+1. Arriba izquierda: ``plot_gmm_feat -x 2 -y 3 work/gmm/mfcc/SES017.gmm work/mfcc/BLOCK01/SES017/* &``
 
-Arriba derecha: ``plot_gmm_feat -x 2 -y 3 -f blue work/gmm/mfcc/SES017.gmm work/mfcc/BLOCK01/SES019/* &``
+2. Arriba derecha: ``plot_gmm_feat -x 2 -y 3 -f blue work/gmm/mfcc/SES017.gmm work/mfcc/BLOCK01/SES019/* &``
 
-Abajo izquierda: ``plot_gmm_feat -x 2 -y 3 -g blue work/gmm/mfcc/SES019.gmm work/mfcc/BLOCK01/SES017/* &``
+3. Abajo izquierda: ``plot_gmm_feat -x 2 -y 3 -g blue work/gmm/mfcc/SES019.gmm work/mfcc/BLOCK01/SES017/* &``
 
-Abajo derecha: ``plot_gmm_feat -x 2 -y 3 -g blue -f blue work/gmm/mfcc/SES019.gmm work/mfcc/BLOCK01/SES0
+4. Abajo derecha: ``plot_gmm_feat -x 2 -y 3 -g blue -f blue work/gmm/mfcc/SES019.gmm work/mfcc/BLOCK01/SES0
 19/* &``
 
 ![tabla](https://github.com/marinapuigdemunt/P4/assets/125259801/8243a6d1-5d89-49d4-bcdd-02c397c0847e)
 
+Tal y como podemos comprobar en la 1a y en la 4a gráfica (cuyo locutor y población son el mismo), el modelo de cada locutor se adapta mejor a sus datos que a los del otro (gráficas 2 y 3). Aun así, en este caso los resultados obtenidos en las gráficas 2 y 3 también se adaptan bastante bien aunque no tan bien como en los otros casos (gráficas 1 y 4).
+
+Por lo tanto, utilizando los GMM podemos determinar si una cierta señal pertenece a uno u otro locutor.
 
 ### Reconocimiento del locutor.
 
