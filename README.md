@@ -33,13 +33,38 @@ ejercicios indicados.
   principal (`sox`, `$X2X`, `$FRAME`, `$WINDOW` y `$LPC`). Explique el significado de cada una de las 
   opciones empleadas y de sus valores.
 
+ Wav2lp.sh es un script de extracción de características de archivos de audio en formato WAV utilizando la biblioteca SPTK (Speech Signal Processing Toolkit). Para ello, el script convierte la señal de audio en sus respectivos coeficientes de predicción lineal (LPC) y la guarda en un archivo de salida en formato fmatrix.
+ 
+ El comando principal es el siguiente:
+ 
+	# Main command for feature extration
+	sox $inputfile -t raw -e signed -b 16 - | $X2X +sf | $FRAME -l 240 -p 80 | $WINDOW -l 240 -L 240 |
+        	$LPC -l 240 -m $lpc_order > $base.lp || exit 1
+   
+En este, vemos los siguientes comandos:
+
+1. `sox`: Convierte el archivo .WAV de input en un archivo .RAW con ciertas características: En este caso, convertimos el fichero a uno  .RAW con codificación de 16 bits y formato "signed".
+
+2. `$X2X`: Esta variable contiene el comando "x2x" (para macOS) o "sptk x2x" (para Windows). Lo utilizamos para convertir los datos de audio a formato short float (+sf).
+
+3. `$FRAME`:Esta variable contiene el comando "frame" (para macOS) o "sptk frame" (para Windows). El comando divide el flujo de datos de audio en tramas (frames) solapadas de longitud fija. En este caso, se utiliza para dividir el flujo de datos de audio en tramas de longitud 240 muestras, con un desplazamiento de 80 muestras entre tramas consecutivas.
+
+4. `$WINDOW`: Esta variable contiene el comando "window" (para macOS) o "sptk window" (para Windows). Se utiliza para aplicar una ventana a cada trama de datos de audio. En este caso, hemos usado una ventana rectangular, en que la longitud de la ventana es igual a la longitud de la trama (240 muestras).
+
+5. `$LPC`: Esta variable contiene el comando "lpc" (para macOS) o "sptk lpc" (para Windows). El comando se utiliza para estimar los coeficientes de predicción lineal (LPC) a partir de las tramas de datos de audio
+
 - Explique el procedimiento seguido para obtener un fichero de formato *fmatrix* a partir de los ficheros de
   salida de SPTK (líneas 45 a 51 del script `wav2lp.sh`).
 
+Después de la extracción de características utilizando los comandos de SPTK mostrados en el apartado anterior, el resultado se guarda en un archivo temporal llamado `$base.lp`. Entonces, se utiliza el comando `x2x` para convertir el archivo `$base.lp` a formato ASCII (`+fa`). Esto convierte los datos binarios en una representación de números float en formato de texto legible. A continuación, se cuenta el número de líneas en el archivo resultante utilizando `wc -l`. Esto nos da el número total de elementos en la matriz de características LPC. Seguidamente se utiliza `perl` para dividir el número total de elementos por el número de columnas en la matriz, que es igual a `lpc_order + 1`. Esto nos da el número de filas en la matriz.
+
   * ¿Por qué es más conveniente el formato *fmatrix* que el SPTK?
+
+El formato fmatrix es más legible y estructurado en comparación con el formato de salida de SPTK. El archivo fmatrix tiene un encabezado que especifica el número de filas y columnas, lo que facilita la comprensión de la estructura de los datos. Además, los datos están organizados en una matriz donde cada fila representa un conjunto de características, lo que facilita su interpretación y manipulación. Además, al tener un formato estándar, es más fácil trabajar con los datos en otras etapas del procesamiento, como el análisis, la visualización o la implementación de algoritmos de aprendizaje automático. Por último, fmatrix permite almacenar los datos de manera más compacta y eficiente en comparación con el formato de salida de SPTK. Al agregar un encabezado que especifica el número de filas y columnas, se evita la necesidad de almacenar metadatos adicionales en cada archivo. Esto reduce el tamaño de los archivos y el espacio de almacenamiento requerido.
 
 - Escriba el *pipeline* principal usado para calcular los coeficientes cepstrales de predicción lineal
   (LPCC) en su fichero <code>scripts/wav2lpcc.sh</code>:
+  
 ```bash
 sox $inputfile -t raw - dither -p 12 | $X2X +sf | $FRAME -l 200 -p 40 | $WINDOW -l 200 -L 200 |
 	$LPC -l 240 -m $lpc_order | $LPC2C -m $lpc_order -M $cepstrum_order  > $base.lpcc
