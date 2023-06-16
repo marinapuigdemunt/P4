@@ -212,9 +212,36 @@ MFCC: ``FEAT=mfcc run_spkid train``
 - Inserte una gráfica que muestre la función de densidad de probabilidad modelada por el GMM de un locutor
   para sus dos primeros coeficientes de MFCC.
 
+Utilizamos el siguiente comando: 
+
+``plot_gmm_feat -x 2 -y 3 work/gmm/mfcc/SES017.gmm work/mfcc/BLOCK01/SES017/* &``
+
+![image](https://github.com/marinapuigdemunt/P4/assets/125259801/80a007d0-48cb-40bb-9445-5ef245389ac3)
+
+
 - Inserte una gráfica que permita comparar los modelos y poblaciones de dos locutores distintos (la gŕafica
   de la página 20 del enunciado puede servirle de referencia del resultado deseado). Analice la capacidad
   del modelado GMM para diferenciar las señales de uno y otro.
+
+  Para poder determinar que un locutor coincide con una población, han de coindicir las regiones con los puntos de las poblaciones. Es decir, la zona donde haya mayor concentración de población estará rodeada por la región con un porcentaje más pequeño.
+
+  A continuación se insertan 4 gráficas.
+
+  Las dos de arriba muestran las regiones (lineas rojas) de la masa de probabilidad para los GMM de los locutores SES017 y las dos de abajo muestran las regiones (lineas azules) de la masa de probabilidad para los GMM de los locutores SES019.
+
+  Las de la izquierda muestran la población del usuario SES017 (puntos rojos) y las de la derecha muestran la población del usuario SES019 (puntos azules).
+
+Arriba izquierda: ``plot_gmm_feat -x 2 -y 3 work/gmm/mfcc/SES017.gmm work/mfcc/BLOCK01/SES017/* &``
+
+Arriba derecha: ``plot_gmm_feat -x 2 -y 3 -f blue work/gmm/mfcc/SES017.gmm work/mfcc/BLOCK01/SES019/* &``
+
+Abajo izquierda: ``plot_gmm_feat -x 2 -y 3 -g blue work/gmm/mfcc/SES019.gmm work/mfcc/BLOCK01/SES017/* &``
+
+Abajo derecha: ``plot_gmm_feat -x 2 -y 3 -g blue -f blue work/gmm/mfcc/SES019.gmm work/mfcc/BLOCK01/SES0
+19/* &``
+
+![tabla](https://github.com/marinapuigdemunt/P4/assets/125259801/8243a6d1-5d89-49d4-bcdd-02c397c0847e)
+
 
 ### Reconocimiento del locutor.
 
