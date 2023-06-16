@@ -32,13 +32,14 @@ ejercicios indicados.
 - Analice el script `wav2lp.sh` y explique la misión de los distintos comandos involucrados en el *pipeline*
   principal (`sox`, `$X2X`, `$FRAME`, `$WINDOW` y `$LPC`). Explique el significado de cada una de las 
   opciones empleadas y de sus valores.
-  
+
  Wav2lp.sh es un script de extracción de características de archivos de audio en formato WAV utilizando la biblioteca SPTK (Speech Signal Processing Toolkit). Para ello, el script convierte la señal de audio en sus respectivos coeficientes de predicción lineal (LPC) y la guarda en un archivo de salida en formato fmatrix.
  
  El comando principal es el siguiente:
  
 	# Main command for feature extration
-	sox $inputfile -t raw -e signed -b 16 - | $X2X +sf | $FRAME -l 240 -p 80 | $WINDOW -l 240 -L 240 | $LPC -l 240 -m $lpc_order > $base.lp || exit 1
+	sox $inputfile -t raw -e signed -b 16 - | $X2X +sf | $FRAME -l 240 -p 80 | $WINDOW -l 240 -L 240 |
+        	$LPC -l 240 -m $lpc_order > $base.lp || exit 1
    
 En este, vemos los siguientes comandos:
 
@@ -50,7 +51,7 @@ En este, vemos los siguientes comandos:
 
 4. `$WINDOW`: Esta variable contiene el comando "window" (para macOS) o "sptk window" (para Windows). Se utiliza para aplicar una ventana a cada trama de datos de audio. En este caso, hemos usado una ventana rectangular, en que la longitud de la ventana es igual a la longitud de la trama (240 muestras).
 
-5. `$LPC`: Esta variable contiene el comando "lpc" (para macOS) o "sptk lpc" (para Windows). El comando se utiliza para estimar los coeficientes de predicción lineal (LPC) a partir de las tramas de datos de audio 
+5. `$LPC`: Esta variable contiene el comando "lpc" (para macOS) o "sptk lpc" (para Windows). El comando se utiliza para estimar los coeficientes de predicción lineal (LPC) a partir de las tramas de datos de audio
 
 - Explique el procedimiento seguido para obtener un fichero de formato *fmatrix* a partir de los ficheros de
   salida de SPTK (líneas 45 a 51 del script `wav2lp.sh`).
@@ -61,7 +62,9 @@ Después de la extracción de características utilizando los comandos de SPTK m
 
 El formato fmatrix es más legible y estructurado en comparación con el formato de salida de SPTK. El archivo fmatrix tiene un encabezado que especifica el número de filas y columnas, lo que facilita la comprensión de la estructura de los datos. Además, los datos están organizados en una matriz donde cada fila representa un conjunto de características, lo que facilita su interpretación y manipulación. Además, al tener un formato estándar, es más fácil trabajar con los datos en otras etapas del procesamiento, como el análisis, la visualización o la implementación de algoritmos de aprendizaje automático. Por último, fmatrix permite almacenar los datos de manera más compacta y eficiente en comparación con el formato de salida de SPTK. Al agregar un encabezado que especifica el número de filas y columnas, se evita la necesidad de almacenar metadatos adicionales en cada archivo. Esto reduce el tamaño de los archivos y el espacio de almacenamiento requerido.
 
-- Escriba el *pipeline* principal usado para calcular los coeficientes cepstrales de predicción lineal (LPCC) en su fichero <code>scripts/wav2lpcc.sh</code>:
+- Escriba el *pipeline* principal usado para calcular los coeficientes cepstrales de predicción lineal
+  (LPCC) en su fichero <code>scripts/wav2lpcc.sh</code>:
+  
 ```bash
 sox $inputfile -t raw - dither -p 12 | $X2X +sf | $FRAME -l 200 -p 40 | $WINDOW -l 200 -L 200 |
 	$LPC -l 240 -m $lpc_order | $LPC2C -m $lpc_order -M $cepstrum_order  > $base.lpcc
@@ -70,8 +73,8 @@ sox $inputfile -t raw - dither -p 12 | $X2X +sf | $FRAME -l 200 -p 40 | $WINDOW 
 - Escriba el *pipeline* principal usado para calcular los coeficientes cepstrales en escala Mel (MFCC) en su
   fichero <code>scripts/wav2mfcc.sh</code>:
 ```bash
-sox $inputfile -t raw - | $X2X +sf | $FRAME -l 200 -p 40 | $WINDOW -l 200 -L 200 |
-  $MFCC -l 200 -m $mfcc_order -n $mfcc_order_channel_melfilterbank -s 8 -w 1 > $base.mfcc
+   sox $inputfile -t raw -e signed -b 16 - | $X2X +sf | $FRAME -l 200 -p 40 |
+    $MFCC -l 200 -m $mfcc_order -n $mfcc_order_channel_melfilterbank -s 8 -w 0 > $base.mfcc
  ```
 
 ### Extracción de características.
@@ -150,7 +153,8 @@ xlabel("Coeficiente 2")
 ylabel("Coeficiente 3")
 ```
 
-![image](https://github.com/marinapuigdemunt/P4/assets/125259801/888f8932-6fa6-4835-9488-a5878d53dead)
+![foto](https://github.com/marinapuigdemunt/P4/assets/125259801/1da93223-46c4-45c8-ac09-b4ec2e1a13a3)
+
 
   + ¿Cuál de ellas le parece que contiene más información?
 
@@ -163,34 +167,47 @@ En cambio, las gráficas de la LPCC y MFCC tienen sus puntos mucho mejor distrib
 - Usando el programa <code>pearson</code>, obtenga los coeficientes de correlación normalizada entre los
   parámetros 2 y 3 para un locutor, y rellene la tabla siguiente con los valores obtenidos.
 
-LP: ``pearson work/lp/BLOCK01/SES019/*.lp``
+LP: ``pearson work/lp/BLOCK01/SES017/*.lp``
 
-![image](https://github.com/marinapuigdemunt/P4/assets/125259801/82aa4e64-fd82-4ee8-9c03-c082523a7e5b)
+![image](https://github.com/marinapuigdemunt/P4/assets/125259801/c9403217-e709-487c-9dbc-53047d7bc361)
 
-LPCC: ``pearson work/lpcc/BLOCK01/SES019/*.lpcc``
+LPCC: ``pearson work/lpcc/BLOCK01/SES017/*.lpcc``
 
-![image](https://github.com/marinapuigdemunt/P4/assets/125259801/7b1a421b-5f61-4e87-b410-1060ac32f317)
+![image](https://github.com/marinapuigdemunt/P4/assets/125259801/0fce67c7-d64d-40dd-8762-1b97120825aa)
 
-MFCC: ``pearson work/mfcc/BLOCK01/SES019/*.mfcc``
+MFCC: ``pearson work/mfcc/BLOCK01/SES017/*.mfcc``
 
-![image](https://github.com/marinapuigdemunt/P4/assets/125259801/7bda8efe-cdfc-4f94-bcd9-b6cd615838df)
+![image](https://github.com/marinapuigdemunt/P4/assets/125259801/973b7141-f0bc-4c65-9554-19ed63982b25)
+
 
 
   |                        | LP   | LPCC | MFCC | 
   |------------------------|:----:|:----:|:----:|
-  | &rho;<sub>x</sub>[2,3] |   -0.716101   |   0.0425619   |   0.263597   |
+  | &rho;<sub>x</sub>[2,3] |   -0.872284   |   -0.0457713   |   -0.203934   |
   
   + Compare los resultados de <code>pearson</code> con los obtenidos gráficamente.
   
-En la LP hemos obtenido una rho en valor absoluto bastante cercana a 1, esto implica una alta correlación entre componentes tal y como habíamos visto antes con la gráfica. En cambio, en la LPCC y la MFCC hemos obtenido unos valores muy cercanos a 0 y por lo tanto obtenemos unos coeficientes poco correlados tal y como habíamos observado en las gráficas.
+En la LP hemos obtenido una rho en valor absoluto bastante cercana a 1, esto implica una alta correlación entre componentes tal y como habíamos visto antes con la gráfica. En cambio, en la LPCC y la MFCC hemos obtenido unos valores muy cercanos a 0 y por lo tanto obtenemos unos coeficientes poco correlados tal y como habíamos observado en las gráficas. Hemos de destacar que sorprendentemente hemos obtenido un valor más cerano a 0 con la LPCC.
 
 - Según la teoría, ¿qué parámetros considera adecuados para el cálculo de los coeficientes LPCC y MFCC?
 
-Según la teoría, para la LPCC el orden típico de coeficientes está entre 8 y 16. En cambio, para la MFCC se eligen entre 12 y 20 coeficientes y el númereo de filtros MEL suele ser entre 20 y 40.
+Según la teoría, para la LPCC el orden típico de coeficientes está entre 8 y 16. En cambio, para la MFCC se eligen entre 12 y 25 coeficientes y el númereo de filtros MEL suele ser entre 20 y 40.
 
 ### Entrenamiento y visualización de los GMM.
 
 Complete el código necesario para entrenar modelos GMM.
+
+Para entrenar los modelos de un locutor (por ejemplo el SES017) utilizamos la siguiente orden:
+
+``gmm_train -d work/lp -e lp -g SES017.gmm lists/class/SES017.train``
+
+En cambio, para entrenar los GMM de todos los locutores a la vez utilizamos:
+
+LP: ``FEAT=lp run_spkid train``
+
+LPCC: ``FEAT=lpcc run_spkid train``
+
+MFCC: ``FEAT=mfcc run_spkid train``
 
 - Inserte una gráfica que muestre la función de densidad de probabilidad modelada por el GMM de un locutor
   para sus dos primeros coeficientes de MFCC.
@@ -225,3 +242,4 @@ Complete el código necesario para realizar verificación del locutor y optimice
 - Recuerde enviar a Atenea un fichero en formato zip o tgz con la memoria (en formato PDF) con el trabajo 
   realizado como ampliación, así como los ficheros `class_ampl.log` y/o `verif_ampl.log`, obtenidos como 
   resultado del mismo.
+
