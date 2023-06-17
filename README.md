@@ -66,7 +66,7 @@ El formato fmatrix es más legible y estructurado en comparación con el formato
   (LPCC) en su fichero <code>scripts/wav2lpcc.sh</code>:
   
 ```bash
-sox $inputfile -t raw - dither -p 12 | $X2X +sf | $FRAME -l 200 -p 40 | $WINDOW -l 200 -L 200 |
+sox $inputfile -t raw -e signed -b 16 - | $X2X +sf | $FRAME -l 200 -p 40 | $WINDOW -l 200 -L 200 |
 	$LPC -l 240 -m $lpc_order | $LPC2C -m $lpc_order -M $cepstrum_order  > $base.lpcc
 ```
   
@@ -246,12 +246,73 @@ Tal y como podemos comprobar en la 1a y en la 4a gráfica (cuyo locutor y poblac
 
 Por lo tanto, utilizando los GMM podemos determinar si una cierta señal pertenece a uno u otro locutor.
 
+Para el entrenamiento hemos usado el fichero gmm_train.cpp, y después de completar las funciones hemos optimizado diversos parámetros:
+
+- m: Número de mezclas (nmix): Después de experimentar con diferentes valores y observar cómo afectaban el rendimiento del modelo hemos concluido que un buen valor era m = 
+
+- N: Número de iteraciones finales de EM (em_iterations): Hemos escogido N = 
+
+- T: Umbral de probabilidad utilizado en las iteraciones finales del algoritmo de Expectation-Maximization: Hemos visto que con valores demasiado bajos (por ejemplo 0) el error aumentaba, pero para el resto el error no se veía afectado. Hemos elegido T = 20.
+
+- i: Método de inicialización (init_method): Hemos probado tanto VQ como EM, y el que mejor nos ha funcionado ha sido EM (aunque con muy poca diferencia respecto del VQ, tan solo un 0,13% de diferencia.
+
+- n: Número de iteraciones en la inicialización del GMM. Hemos escogido n = 
+
+- t: Umbral de probabilidad utilizado en las iteraciones en la inicialización del algoritmo de Expectation-Maximization. Hemos elegido t = 
+
 ### Reconocimiento del locutor.
 
 Complete el código necesario para realizar reconociminto del locutor y optimice sus parámetros.
 
+
+Cada vez que se ha modificado el compute_$FEAT() del run_spkid.sh se han ejecutado en el terminal los siguientes comandos según el caso:
+
+LP: ``run_spkid lp``
+
+LPCC: ``run_spkid lpcc``
+
+MFCC: ``run_spkid mfcc``
+
+A continuación, para ejecutar el train, el test y el classerr (para la obtención de la tasa de error) se ha utilizado:
+
+LP: ``FEAT=lp run_spkid train test classerr``
+
+LPCC: ``FEAT=lpcc run_spkid train test classerr``
+
+Mejor sistema: 
+
+```bash
+if [[ $cmd == train ]]; then
+       ## @file
+       # \TODO
+       # Select (or change) good parameters for gmm_train
+       for dir in $db_devel/BLOCK*/SES* ; do
+           name=${dir/*\/}
+           echo $name ----
+           EXEC="gmm_train -v 255 -i 2 -T 0.001 -N 64 -m 32 -d $w/$FEAT -e $FEAT -g $w/gmm/$FEAT/$name.gmm $lists/class/$name.train" # -m num gausianas 
+           echo $EXEC && $EXEC || exit 1
+           echo
+       done
+```
+
+MFCC: ``FEAT=mfcc run_spkid train test classerr``
+
+
 - Inserte una tabla con la tasa de error obtenida en el reconocimiento de los locutores de la base de datos
   SPEECON usando su mejor sistema de reconocimiento para los parámetros LP, LPCC y MFCC.
+
+  |                        | LP   | LPCC | MFCC | 
+  |------------------------|:----:|:----:|:----:|
+  | Error Rate |   10.70%   |   0.38%   |   1.40%   |
+
+
+Captura tasa de error del LP:
+
+Captura tasa de error del LPCC:
+
+![image](https://github.com/marinapuigdemunt/P4/assets/125259801/e8cd7733-470f-4e40-9cb8-979566fc96c7)
+
+Captura tasa de error del LP:
 
 ### Verificación del locutor.
 
