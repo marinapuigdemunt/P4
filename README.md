@@ -66,7 +66,7 @@ El formato fmatrix es más legible y estructurado en comparación con el formato
   (LPCC) en su fichero <code>scripts/wav2lpcc.sh</code>:
   
 ```bash
-sox $inputfile -t raw -e signed -b 16 - | $X2X +sf | $FRAME -l 200 -p 40 | $WINDOW -l 200 -L 200 |
+sox $inputfile -t raw -e signed -b 16 - | $X2X +sf | $FRAME -l 240 -p 80 | $WINDOW -l 240 -L 240 |
 	$LPC -l 240 -m $lpc_order | $LPC2C -m $lpc_order -M $cepstrum_order  > $base.lpcc
 ```
   
@@ -180,7 +180,6 @@ MFCC: ``pearson work/mfcc/BLOCK01/SES017/*.mfcc``
 ![image](https://github.com/marinapuigdemunt/P4/assets/125259801/973b7141-f0bc-4c65-9554-19ed63982b25)
 
 
-
   |                        | LP   | LPCC | MFCC | 
   |------------------------|:----:|:----:|:----:|
   | &rho;<sub>x</sub>[2,3] |   -0.872284   |   -0.0457713   |   -0.203934   |
@@ -209,23 +208,6 @@ LPCC: ``FEAT=lpcc run_spkid train``
 
 MFCC: ``FEAT=mfcc run_spkid train``
 
-<<<<<<< HEAD
-=======
-Para el entrenamiento hemos usado el fichero gmmtrain.cpp, y después de completar las funciones hemos optimizado diversos parámetros:
-
-- m: Número de mezclas (nmix): Después de experimentar con diferentes valores y observar cómo afectaban el rendimiento del modelo hemos concluido que un buen valor era m = 
-
-- N: Número de iteraciones finales de EM (em_iterations): Hemos escogido N = 
-
-- T: Umbral de probabilidad utilizado en las iteraciones finales del algoritmo de Expectation-Maximization: Hemos visto que con valores demasiado bajos (por ejemplo 0) el error aumentaba, pero para el resto el error no se veía afectado. Hemos elegido T = 20.
-
-- i: Método de inicialización (init_method): Hemos probado tanto VQ como EM, y el que mejor nos ha funcionado ha sido EM (aunque con muy poca diferencia respecto del VQ, tan solo un 0,13% de diferencia.
-
-- n: Número de iteraciones en la inicialización del GMM. Hemos escogido n = 
-
-- t: Umbral de probabilidad utilizado en las iteraciones en la inicialización del algoritmo de Expectation-Maximization. Hemos elegido t = 
-
->>>>>>> afbbc4366c297c444e7a655fee336f7e26e61a34
 - Inserte una gráfica que muestre la función de densidad de probabilidad modelada por el GMM de un locutor
   para sus dos primeros coeficientes de MFCC.
 
@@ -265,22 +247,21 @@ Por lo tanto, utilizando los GMM podemos determinar si una cierta señal pertene
 
 Para el entrenamiento hemos usado el fichero gmm_train.cpp, y después de completar las funciones hemos optimizado diversos parámetros:
 
-- m: Número de mezclas (nmix): Después de experimentar con diferentes valores y observar cómo afectaban el rendimiento del modelo hemos concluido que un buen valor era m = 
+- m: Número de mezclas (nmix)
 
-- N: Número de iteraciones finales de EM (em_iterations): Hemos escogido N = 
+- N: Número de iteraciones finales de EM (em_iterations)
 
-- T: Umbral de probabilidad utilizado en las iteraciones finales del algoritmo de Expectation-Maximization: Hemos visto que con valores demasiado bajos (por ejemplo 0) el error aumentaba, pero para el resto el error no se veía afectado. Hemos elegido T = 20.
+- T: Umbral de probabilidad utilizado en las iteraciones finales del algoritmo de Expectation-Maximization
 
 - i: Método de inicialización (init_method): Hemos probado tanto VQ como EM, y el que mejor nos ha funcionado ha sido EM (aunque con muy poca diferencia respecto del VQ, tan solo un 0,13% de diferencia.
 
-- n: Número de iteraciones en la inicialización del GMM. Hemos escogido n = 
+- n: Número de iteraciones en la inicialización del GMM. 
 
-- t: Umbral de probabilidad utilizado en las iteraciones en la inicialización del algoritmo de Expectation-Maximization. Hemos elegido t = 
+- t: Umbral de probabilidad utilizado en las iteraciones en la inicialización del algoritmo de Expectation-Maximization.
 
 ### Reconocimiento del locutor.
 
 Complete el código necesario para realizar reconociminto del locutor y optimice sus parámetros.
-
 
 Cada vez que se ha modificado el compute_$FEAT() del run_spkid.sh se han ejecutado en el terminal los siguientes comandos según el caso:
 
@@ -290,11 +271,64 @@ LPCC: ``run_spkid lpcc``
 
 MFCC: ``run_spkid mfcc``
 
+Los definitivos han sido:
+
+```bash
+compute_lp() {
+    db=$1
+    shift
+    for filename in $(sort $*); do
+        mkdir -p `dirname $w/$FEAT/$filename.$FEAT`
+        EXEC="wav2lp 8 $db/$filename.wav $w/$FEAT/$filename.$FEAT" #wav2lp orden del lp
+        echo $EXEC && $EXEC || exit 1
+    done
+}
+
+compute_lpcc() {
+    db1=$1
+    shift
+    for filename in $(sort $*); do
+        mkdir -p `dirname $w/$FEAT/$filename.$FEAT`
+        EXEC="wav2lpcc 25 25 $db1/$filename.wav $w/$FEAT/$filename.$FEAT" #wav2lpcc [orden del lp] [orden del cepstrum]
+        echo $EXEC && $EXEC || exit 1
+    done
+}
+
+compute_mfcc() {
+    db2=$1
+    shift
+    for filename in $(sort $*); do
+        mkdir -p `dirname $w/$FEAT/$filename.$FEAT`
+        while true; do
+            EXEC="wav2mfcc 24 36 $db2/$filename.wav $w/$FEAT/$filename.$FEAT" #wav2mfcc [orden del mfcc] [orden de canales para el mel-filter bank]
+            echo $EXEC && $EXEC
+            if [[ $? == 0 ]]; then
+                break
+            fi
+        done
+    done
+}
+```
+
 A continuación, para ejecutar el train, el test y el classerr (para la obtención de la tasa de error) se ha utilizado:
 
 LP: ``FEAT=lp run_spkid train test classerr``
 
-Mejor sistema: 
+Mejor sistema:
+
+```bash
+if [[ $cmd == train ]]; then
+       ## @file
+       # \TODO
+       # Select (or change) good parameters for gmm_train
+       for dir in $db_devel/BLOCK*/SES* ; do
+          name=${dir/*\/}
+          echo $name ----
+          EXEC="gmm_train -v 255 -i 2 -T 0.00001 -N 70 -m 80 -d $w/$FEAT -e $FEAT -g $w/gmm/$FEAT/$name.gmm $lists/class/$name.train" # -m num gausianas
+          echo $EXEC && $EXEC || exit 1
+          echo
+      done
+``` 
 
 LPCC: ``FEAT=lpcc run_spkid train test classerr``
 
@@ -318,21 +352,43 @@ MFCC: ``FEAT=mfcc run_spkid train test classerr``
 
 Mejor sistema: 
 
+```bash
+if [[ $cmd == train ]]; then
+       ## @file
+       # \TODO
+       # Select (or change) good parameters for gmm_train
+       for dir in $db_devel/BLOCK*/SES* ; do
+           name=${dir/*\/}
+           echo $name ----
+           EXEC="gmm_train -v 255 -i 2 -T 0.00001 -N 60 -m 40 -d $w/$FEAT -e $FEAT -g $w/gmm/$FEAT/$name.gmm $lists/class/$name.train" # -m num gausianas 
+           echo $EXEC && $EXEC || exit 1
+           echo
+       done
+```
+
+
+
 - Inserte una tabla con la tasa de error obtenida en el reconocimiento de los locutores de la base de datos
   SPEECON usando su mejor sistema de reconocimiento para los parámetros LP, LPCC y MFCC.
 
   |                        | LP   | LPCC | MFCC | 
   |------------------------|:----:|:----:|:----:|
-  | Error Rate |   10.70%   |   0.38%   |   1.40%   |
+  | Error Rate |   9.94%   |   0.38%   |   1.40%   |
 
 
 Captura tasa de error del LP:
+
+<img width="502" alt="image" src="https://github.com/marinapuigdemunt/P4/assets/125259984/f2a91047-8ea1-46b6-b4db-d4f68be1631a">
+
 
 Captura tasa de error del LPCC:
 
 ![image](https://github.com/marinapuigdemunt/P4/assets/125259801/e8cd7733-470f-4e40-9cb8-979566fc96c7)
 
-Captura tasa de error del LP:
+Captura tasa de error del MFCC:
+
+<img width="486" alt="image" src="https://github.com/marinapuigdemunt/P4/assets/125259984/2ec1f345-dc15-4cdf-9d79-7d445a1bb12f">
+
 
 ### Verificación del locutor.
 
@@ -346,6 +402,18 @@ Complete el código necesario para realizar verificación del locutor y optimice
 Para este apartado vamos a utilizar el trainworld, pora ello, copiamos los mejores parámetros obtenidos en el apartado anterior para cada caso de la siguiente manera:
 
 LP:
+
+```bash
+elif [[ $cmd == trainworld ]]; then
+       ## @file
+       # \TODO
+       # Implement 'trainworld' in order to get a Universal Background Model for speaker verification
+       #
+       # - The name of the world model will be used by gmm_verify in the 'verify' command below.
+       # \DONE Hecho
+       EXEC="gmm_train -v 255 -i 2 -T 0.00001 -N 70 -m 80 -d $w/$FEAT -e $FEAT -g $w/gmm/$FEAT/$world.gmm $lists/verif/$world.train"
+       echo $EXEC && $EXEC || exit 1
+```
 
 LPCC:
 
@@ -363,9 +431,23 @@ elif [[ $cmd == trainworld ]]; then
 
 MFCC:
 
+```bash
+elif [[ $cmd == trainworld ]]; then
+       ## @file
+       # \TODO
+       # Implement 'trainworld' in order to get a Universal Background Model for speaker verification
+       #
+       # - The name of the world model will be used by gmm_verify in the 'verify' command below.
+       # \DONE Hecho
+       EXEC="gmm_train -v 255 -i 2 -T 0.00001 -N 60 -m 40 -d $w/$FEAT -e $FEAT -g $w/gmm/$FEAT/$world.gmm $lists/verif/$world.train"
+       echo $EXEC && $EXEC || exit 1
+```
+
 Para obtener los datos pedidos en el enunciado ejecutamos los siguientes comandos:
 
 LP: ``FEAT=lp run_spkid trainworld verify verifyerr``
+
+<img width="527" alt="image" src="https://github.com/marinapuigdemunt/P4/assets/125259984/4b8dcb30-680f-4d6e-b749-b7c14cb48cc1">
 
 LPCC: ``FEAT=lpcc run_spkid trainworld verify verifyerr``
 
@@ -374,12 +456,14 @@ LPCC: ``FEAT=lpcc run_spkid trainworld verify verifyerr``
 
 MFCC: ``FEAT=mfcc run_spkid trainworld verify verifyerr``
 
+<img width="520" alt="image" src="https://github.com/marinapuigdemunt/P4/assets/125259984/bd48573f-4488-45d3-bb2e-e0be02ac6ce3">
+
 
 Tabla comparativa del score (CostDetection) con las 3 parametrizaciones:
 
 |                        | LP   | LPCC | MFCC | 
 |------------------------|:----:|:----:|:----:|
-| CostDetection |   ?   |   3.7   |   ?   |
+| CostDetection |   35.8   |   3.7   |   24.1   |
 
 Observamos que la parametrización que ha dado mejores resultados ha sido la de LPCC. Por lo tanto, obtenemos la siguiente tabla:
 
@@ -392,28 +476,24 @@ Observamos que la parametrización que ha dado mejores resultados ha sido la de 
 - Adjunte, en el repositorio de la práctica, los ficheros `class_test.log` y `verif_test.log` 
   correspondientes a la evaluación *ciega* final.
 
+Finalmente concluimos que el mejor sistema de parametrización a sido el de LPCC, por ello creamos estos dos ficheros respecto esta parametrización.
+
 Para realizar el test final utilizamos los comandos:
 
-1. Creamos los ficheros class_test.log para cada una de las parametrizaciones.
-
-LP: ``FEAT=lp run_spkid finalclass``
+1. Creamos el fichero class_test.log
 
 LPCC: ``FEAT=lpcc run_spkid finalclass``
 
-MFCC: ``FEAT=mfcc run_spkid finalclass``
+[class_test.log](https://github.com/marinapuigdemunt/P4/blob/Caldes-Puigdemunt/class_test.log)
 
-2. Creamos los ficheros verif_test.log para cada una de las parametrizaciones.
-
-LP: ``FEAT=lp run_spkid finalverif``
+2. Creamos el fichero verif_test.log
 
 LPCC: ``FEAT=lpcc run_spkid finalverif``
 
-MFCC: ``FEAT=mfcc run_spkid finalverif``
-
+[verif_test.log](https://github.com/marinapuigdemunt/P4/blob/Caldes-Puigdemunt/verif_test.log)
 
 ### Trabajo de ampliación.
 
 - Recuerde enviar a Atenea un fichero en formato zip o tgz con la memoria (en formato PDF) con el trabajo 
   realizado como ampliación, así como los ficheros `class_ampl.log` y/o `verif_ampl.log`, obtenidos como 
   resultado del mismo.
-
