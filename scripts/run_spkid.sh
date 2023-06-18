@@ -87,7 +87,7 @@ compute_lp() {
     shift
     for filename in $(sort $*); do
         mkdir -p `dirname $w/$FEAT/$filename.$FEAT`
-        EXEC="wav2lp 8 $db/$filename.wav $w/$FEAT/$filename.$FEAT" #wav2lp orden del lp
+        EXEC="wav2lp 25 $db/$filename.wav $w/$FEAT/$filename.$FEAT" #wav2lp orden del lp
         echo $EXEC && $EXEC || exit 1
     done
 }
@@ -97,7 +97,7 @@ compute_lpcc() {
     shift
     for filename in $(sort $*); do
         mkdir -p `dirname $w/$FEAT/$filename.$FEAT`
-        EXEC="wav2lpcc 8 25 $db1/$filename.wav $w/$FEAT/$filename.$FEAT" #wav2lpcc [orden del lp] [orden del cepstrum]
+        EXEC="wav2lpcc 25 25 $db1/$filename.wav $w/$FEAT/$filename.$FEAT" #wav2lpcc [orden del lp] [orden del cepstrum]
         echo $EXEC && $EXEC || exit 1
     done
 }
@@ -144,7 +144,7 @@ for cmd in $*; do
        for dir in $db_devel/BLOCK*/SES* ; do
            name=${dir/*\/}
            echo $name ----
-           EXEC="gmm_train -v 1 -T 0.00001 -N 20 -m 5 -d $w/$FEAT -e $FEAT -g $w/gmm/$FEAT/$name.gmm $lists/class/$name.train" # -m num gausianas 
+           EXEC="gmm_train -v 255 -i 2 -T 0.001 -N 64 -m 32 -d $w/$FEAT -e $FEAT -g $w/gmm/$FEAT/$name.gmm $lists/class/$name.train" # -m num gausianas 
            echo $EXEC && $EXEC || exit 1
            echo
        done
@@ -171,7 +171,7 @@ for cmd in $*; do
        #
        # - The name of the world model will be used by gmm_verify in the 'verify' command below.
        # \DONE Hecho
-       EXEC="gmm_train -v 1 -T 0.00001 -N 20 -m 5 -d $w/$FEAT -e $FEAT -g $w/gmm/$FEAT/$world.gmm $lists/verif/$world.train"
+       EXEC="gmm_train -v 255 -i 2 -T 0.001 -N 64 -m 32 -d $w/$FEAT -e $FEAT -g $w/gmm/$FEAT/$world.gmm $lists/verif/$world.train"
        echo $EXEC && $EXEC || exit 1
 
    elif [[ $cmd == verify ]]; then
