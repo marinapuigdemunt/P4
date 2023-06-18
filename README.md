@@ -443,13 +443,13 @@ Para realizar el test final utilizamos los comandos:
 
 LPCC: ``FEAT=lpcc run_spkid finalclass``
 
-https://github.com/marinapuigdemunt/P4/blob/main/class_test.log
+[class_test.log](https://github.com/marinapuigdemunt/P4/blob/Caldes-Puigdemunt/class_test.log)
 
 2. Creamos el fichero verif_test.log
 
 LPCC: ``FEAT=lpcc run_spkid finalverif``
 
-https://github.com/marinapuigdemunt/P4/blob/main/verif_test.log
+[verif_test.log](https://github.com/marinapuigdemunt/P4/blob/Caldes-Puigdemunt/verif_test.log)
 
 ### Trabajo de ampliación.
 
