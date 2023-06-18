@@ -66,7 +66,7 @@ El formato fmatrix es más legible y estructurado en comparación con el formato
   (LPCC) en su fichero <code>scripts/wav2lpcc.sh</code>:
   
 ```bash
-sox $inputfile -t raw -e signed -b 16 - | $X2X +sf | $FRAME -l 200 -p 40 | $WINDOW -l 200 -L 200 |
+sox $inputfile -t raw -e signed -b 16 - | $X2X +sf | $FRAME -l 240 -p 80 | $WINDOW -l 240 -L 240 |
 	$LPC -l 240 -m $lpc_order | $LPC2C -m $lpc_order -M $cepstrum_order  > $base.lpcc
 ```
   
@@ -271,9 +271,50 @@ LPCC: ``run_spkid lpcc``
 
 MFCC: ``run_spkid mfcc``
 
+Los definitivos han sido:
+
+```bash
+compute_lp() {
+    db=$1
+    shift
+    for filename in $(sort $*); do
+        mkdir -p `dirname $w/$FEAT/$filename.$FEAT`
+        EXEC="wav2lp 8 $db/$filename.wav $w/$FEAT/$filename.$FEAT" #wav2lp orden del lp
+        echo $EXEC && $EXEC || exit 1
+    done
+}
+
+compute_lpcc() {
+    db1=$1
+    shift
+    for filename in $(sort $*); do
+        mkdir -p `dirname $w/$FEAT/$filename.$FEAT`
+        EXEC="wav2lpcc 25 25 $db1/$filename.wav $w/$FEAT/$filename.$FEAT" #wav2lpcc [orden del lp] [orden del cepstrum]
+        echo $EXEC && $EXEC || exit 1
+    done
+}
+
+compute_mfcc() {
+    db2=$1
+    shift
+    for filename in $(sort $*); do
+        mkdir -p `dirname $w/$FEAT/$filename.$FEAT`
+        while true; do
+            EXEC="wav2mfcc 24 36 $db2/$filename.wav $w/$FEAT/$filename.$FEAT" #wav2mfcc [orden del mfcc] [orden de canales para el mel-filter bank]
+            echo $EXEC && $EXEC
+            if [[ $? == 0 ]]; then
+                break
+            fi
+        done
+    done
+}
+```
+
 A continuación, para ejecutar el train, el test y el classerr (para la obtención de la tasa de error) se ha utilizado:
 
 LP: ``FEAT=lp run_spkid train test classerr``
+
+Mejor sistema:
 
 ```bash
 if [[ $cmd == train ]]; then
@@ -287,9 +328,7 @@ if [[ $cmd == train ]]; then
           echo $EXEC && $EXEC || exit 1
           echo
       done
-```
-
-Mejor sistema: 
+``` 
 
 LPCC: ``FEAT=lpcc run_spkid train test classerr``
 
@@ -311,6 +350,8 @@ if [[ $cmd == train ]]; then
 
 MFCC: ``FEAT=mfcc run_spkid train test classerr``
 
+Mejor sistema: 
+
 ```bash
 if [[ $cmd == train ]]; then
        ## @file
@@ -325,7 +366,7 @@ if [[ $cmd == train ]]; then
        done
 ```
 
-Mejor sistema: 
+
 
 - Inserte una tabla con la tasa de error obtenida en el reconocimiento de los locutores de la base de datos
   SPEECON usando su mejor sistema de reconocimiento para los parámetros LP, LPCC y MFCC.
