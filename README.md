@@ -209,6 +209,23 @@ LPCC: ``FEAT=lpcc run_spkid train``
 
 MFCC: ``FEAT=mfcc run_spkid train``
 
+<<<<<<< HEAD
+=======
+Para el entrenamiento hemos usado el fichero gmmtrain.cpp, y después de completar las funciones hemos optimizado diversos parámetros:
+
+- m: Número de mezclas (nmix): Después de experimentar con diferentes valores y observar cómo afectaban el rendimiento del modelo hemos concluido que un buen valor era m = 
+
+- N: Número de iteraciones finales de EM (em_iterations): Hemos escogido N = 
+
+- T: Umbral de probabilidad utilizado en las iteraciones finales del algoritmo de Expectation-Maximization: Hemos visto que con valores demasiado bajos (por ejemplo 0) el error aumentaba, pero para el resto el error no se veía afectado. Hemos elegido T = 20.
+
+- i: Método de inicialización (init_method): Hemos probado tanto VQ como EM, y el que mejor nos ha funcionado ha sido EM (aunque con muy poca diferencia respecto del VQ, tan solo un 0,13% de diferencia.
+
+- n: Número de iteraciones en la inicialización del GMM. Hemos escogido n = 
+
+- t: Umbral de probabilidad utilizado en las iteraciones en la inicialización del algoritmo de Expectation-Maximization. Hemos elegido t = 
+
+>>>>>>> afbbc4366c297c444e7a655fee336f7e26e61a34
 - Inserte una gráfica que muestre la función de densidad de probabilidad modelada por el GMM de un locutor
   para sus dos primeros coeficientes de MFCC.
 
@@ -399,3 +416,4 @@ MFCC: ``FEAT=mfcc run_spkid finalverif``
 - Recuerde enviar a Atenea un fichero en formato zip o tgz con la memoria (en formato PDF) con el trabajo 
   realizado como ampliación, así como los ficheros `class_ampl.log` y/o `verif_ampl.log`, obtenidos como 
   resultado del mismo.
+

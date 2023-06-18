@@ -87,7 +87,7 @@ compute_lp() {
     shift
     for filename in $(sort $*); do
         mkdir -p `dirname $w/$FEAT/$filename.$FEAT`
-        EXEC="wav2lp 25 $db/$filename.wav $w/$FEAT/$filename.$FEAT" #wav2lp orden del lp
+        EXEC="wav2lp 8 $db/$filename.wav $w/$FEAT/$filename.$FEAT" #wav2lp orden del lp
         echo $EXEC && $EXEC || exit 1
     done
 }
