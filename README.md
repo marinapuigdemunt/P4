@@ -375,24 +375,17 @@ Observamos que la parametrización que ha dado mejores resultados ha sido la de 
 - Adjunte, en el repositorio de la práctica, los ficheros `class_test.log` y `verif_test.log` 
   correspondientes a la evaluación *ciega* final.
 
+Finalmente concluimos que el mejor sistema de parametrización a sido el de LPCC, por ello creamos estos dos ficheros respecto esta parametrización.
+
 Para realizar el test final utilizamos los comandos:
 
-1. Creamos los ficheros class_test.log para cada una de las parametrizaciones.
-
-LP: ``FEAT=lp run_spkid finalclass``
+1. Creamos el fichero class_test.log
 
 LPCC: ``FEAT=lpcc run_spkid finalclass``
 
-MFCC: ``FEAT=mfcc run_spkid finalclass``
-
-2. Creamos los ficheros verif_test.log para cada una de las parametrizaciones.
-
-LP: ``FEAT=lp run_spkid finalverif``
+2. Creamos el fichero verif_test.log
 
 LPCC: ``FEAT=lpcc run_spkid finalverif``
-
-MFCC: ``FEAT=mfcc run_spkid finalverif``
-
 
 ### Trabajo de ampliación.
 
