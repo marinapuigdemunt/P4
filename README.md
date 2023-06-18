@@ -406,8 +406,7 @@ Para obtener los datos pedidos en el enunciado ejecutamos los siguientes comando
 
 LP: ``FEAT=lp run_spkid trainworld verify verifyerr``
 
-<img width="525" alt="image" src="https://github.com/marinapuigdemunt/P4/assets/125259984/dcde40b0-2017-4186-ae48-7d532f3a53e2">
-
+<img width="527" alt="image" src="https://github.com/marinapuigdemunt/P4/assets/125259984/4b8dcb30-680f-4d6e-b749-b7c14cb48cc1">
 
 LPCC: ``FEAT=lpcc run_spkid trainworld verify verifyerr``
 
