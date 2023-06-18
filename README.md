@@ -375,6 +375,25 @@ Observamos que la parametrización que ha dado mejores resultados ha sido la de 
 - Adjunte, en el repositorio de la práctica, los ficheros `class_test.log` y `verif_test.log` 
   correspondientes a la evaluación *ciega* final.
 
+Para realizar el test final utilizamos los comandos:
+
+1. Creamos los ficheros class_test.log para cada una de las parametrizaciones.
+
+LP: ``FEAT=lp run_spkid finalclass``
+
+LPCC: ``FEAT=lpcc run_spkid finalclass``
+
+MFCC: ``FEAT=mfcc run_spkid finalclass``
+
+2. Creamos los ficheros verif_test.log para cada una de las parametrizaciones.
+
+LP: ``FEAT=lp run_spkid finalverif``
+
+LPCC: ``FEAT=lpcc run_spkid finalverif``
+
+MFCC: ``FEAT=mfcc run_spkid finalverif``
+
+
 ### Trabajo de ampliación.
 
 - Recuerde enviar a Atenea un fichero en formato zip o tgz con la memoria (en formato PDF) con el trabajo 
