@@ -277,6 +277,8 @@ A continuación, para ejecutar el train, el test y el classerr (para la obtenci�
 
 LP: ``FEAT=lp run_spkid train test classerr``
 
+Mejor sistema: 
+
 LPCC: ``FEAT=lpcc run_spkid train test classerr``
 
 Mejor sistema: 
@@ -297,6 +299,7 @@ if [[ $cmd == train ]]; then
 
 MFCC: ``FEAT=mfcc run_spkid train test classerr``
 
+Mejor sistema: 
 
 - Inserte una tabla con la tasa de error obtenida en el reconocimiento de los locutores de la base de datos
   SPEECON usando su mejor sistema de reconocimiento para los parámetros LP, LPCC y MFCC.
@@ -322,6 +325,50 @@ Complete el código necesario para realizar verificación del locutor y optimice
   de verificación de SPEECON. La tabla debe incluir el umbral óptimo, el número de falsas alarmas y de
   pérdidas, y el score obtenido usando la parametrización que mejor resultado le hubiera dado en la tarea
   de reconocimiento.
+
+Para este apartado vamos a utilizar el trainworld, pora ello, copiamos los mejores parámetros obtenidos en el apartado anterior para cada caso de la siguiente manera:
+
+LP:
+
+LPCC:
+
+```bash
+elif [[ $cmd == trainworld ]]; then
+       ## @file
+       # \TODO
+       # Implement 'trainworld' in order to get a Universal Background Model for speaker verification
+       #
+       # - The name of the world model will be used by gmm_verify in the 'verify' command below.
+       # \DONE Hecho
+       EXEC="gmm_train -v 255 -i 2 -T 0.001 -N 64 -m 32 -d $w/$FEAT -e $FEAT -g $w/gmm/$FEAT/$world.gmm $lists/verif/$world.train"
+       echo $EXEC && $EXEC || exit 1
+```
+
+MFCC:
+
+Para obtener los datos pedidos en el enunciado ejecutamos los siguientes comandos:
+
+LP: ``FEAT=lp run_spkid trainworld verify verifyerr``
+
+LPCC: ``FEAT=lpcc run_spkid trainworld verify verifyerr``
+
+![image](https://github.com/marinapuigdemunt/P4/assets/125259801/b086f948-7738-4923-ab8b-182936b2c631)
+
+
+MFCC: ``FEAT=mfcc run_spkid trainworld verify verifyerr``
+
+
+Tabla comparativa del score (CostDetection) con las 3 parametrizaciones:
+
+|                        | LP   | LPCC | MFCC | 
+|------------------------|:----:|:----:|:----:|
+| CostDetection |   ?   |   3.7   |   ?   |
+
+Observamos que la parametrización que ha dado mejores resultados ha sido la de LPCC. Por lo tanto, obtenemos la siguiente tabla:
+
+| Sistema | Umbral Óptimo | Falsas Alarmas | Pérdidas | Score |
+|------------------------|:----:|:----:|:----:|:----:|
+| LPCC | 0.267230237094201 | 0.0010 | 0.0280 | 3.7 |
  
 ### Test final
 
